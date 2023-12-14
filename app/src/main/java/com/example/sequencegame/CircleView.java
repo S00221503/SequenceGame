@@ -42,11 +42,11 @@ public class CircleView extends View {
 
         int circleRadius = Math.min(viewWidth, viewHeight) / 8;
 
-        // Draw the sequence of circles with non-overlapping random positions
+        //Draw the sequence of circles with non-overlapping random positions
         for (int i = 0; i < 4; i++) {
             paint.setColor(circleColors[i]);
 
-            // Generate non-overlapping random positions for the circles
+            //Generate non-overlapping random positions for the circles
             PointF center = generateNonOverlappingPosition(viewWidth, viewHeight, circleRadius);
             float centerX = center.x;
             float centerY = center.y;
@@ -56,7 +56,7 @@ public class CircleView extends View {
         }
     }
 
-    // Generate non-overlapping random positions for the circles
+    //Generate non-overlapping random positions for the circles
     private PointF generateNonOverlappingPosition(int viewWidth, int viewHeight, int circleRadius) {
         PointF center;
         int attempts = 0;
@@ -67,7 +67,7 @@ public class CircleView extends View {
 
             center = new PointF(centerX, centerY);
 
-            // Check for overlap with existing circles
+            //Check for overlap with existing circles
             boolean isOverlapping = false;
             for (PointF existingCenter : circleCenters) {
                 float distance = (float) Math.sqrt(
@@ -83,7 +83,7 @@ public class CircleView extends View {
             }
 
             attempts++;
-        } while (attempts < 100); // Maximum attempts to find non-overlapping position
+        } while (attempts < 100); //Maximum attempts to find non-overlapping position
         return center;
     }
 }

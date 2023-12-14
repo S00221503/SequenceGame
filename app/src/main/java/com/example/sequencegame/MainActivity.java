@@ -13,7 +13,8 @@ import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+
+public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnTouchListener {
 
     private SensorManager sensorManager;
     private Sensor accelerometer;
@@ -30,9 +31,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         CircleView circleView = new CircleView(this);
 
         linearLayout.addView(circleView);
+        linearLayout.setOnTouchListener(this); //Set onTouchListener for the layout
+
         setContentView(linearLayout);
 
-        // Initialize accelerometer
+        //Initialize accelerometer
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         if (sensorManager != null) {
             accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -40,21 +43,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
             }
         }
-
-        // Add a touch listener to the layout
-        linearLayout.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                // Check if the user touches the screen
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    // Start the ActivityPlay
-                    Intent intent = new Intent(MainActivity.this, ActivityPlay.class);
-                    startActivity(intent);
-                    return true;  // Consume the event
-                }
-                return false;
-            }
-        });
     }
 
     @Override
@@ -64,9 +52,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             float y = event.values[1];
             float z = event.values[2];
 
-            // Check if the phone is tilted
+            //Check if the phone is tilted
             if (Math.sqrt(x * x + y * y + z * z) > ACCELEROMETER_THRESHOLD) {
-                // Start the ActivityPlay
+                //Start the NextActivity
                 Intent intent = new Intent(MainActivity.this, ActivityPlay.class);
                 startActivity(intent);
             }
@@ -75,15 +63,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // Do nothing for this example
+        //Do nothing for this example
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Unregister the sensor listener when the activity is destroyed
+        //Unregister the sensor listener when the activity is destroyed
         if (sensorManager != null) {
             sensorManager.unregisterListener(this);
         }
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        //Start the NextActivity when the screen is touched
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            Intent intent = new Intent(MainActivity.this, ActivityPlay.class);
+            startActivity(intent);
+        }
+        return true;
     }
 }

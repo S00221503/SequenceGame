@@ -1,11 +1,13 @@
 package com.example.sequencegame;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PointF;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -21,6 +23,7 @@ public class ActivityPlay extends AppCompatActivity {
 
     private List<Circle> circles = new ArrayList<>();
     private Random random = new Random();
+    private Handler handler = new Handler(Looper.getMainLooper()); //Handler for delayed action
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +33,14 @@ public class ActivityPlay extends AppCompatActivity {
         setContentView(circleView);
 
         generateCircles();
+
+        //Post a delayed action to move to OverActivity after 10 seconds
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                moveToOverActivity();
+            }
+        }, 10000); // 10 seconds delay
     }
 
     private void generateCircles() {
@@ -37,11 +48,11 @@ public class ActivityPlay extends AppCompatActivity {
 
         // Generate circles in random positions
         for (int i = 0; i < 4; i++) {
-            int radius = 180; //Setting size of circle
+            int radius = 180; // Adjust size of circle
             int x = random.nextInt(getScreenWidth() - 2 * radius) + radius;
             int y = random.nextInt(getScreenHeight() - 2 * radius) + radius;
 
-            int color = getRandomDistinctColor(usedColors); // Ensure distinct colors
+            int color = getRandomDistinctColor(usedColors); //Ensure distinct colors
             Circle circle = new Circle(x, y, radius, color);
             circles.add(circle);
         }
@@ -66,7 +77,7 @@ public class ActivityPlay extends AppCompatActivity {
         }
 
         if (remainingColors.isEmpty()) {
-            // If all colors are used, reset the set
+            //If all colors are used, reset the set
             usedColors.clear();
             remainingColors.addAll(usedColors);
         }
@@ -79,7 +90,7 @@ public class ActivityPlay extends AppCompatActivity {
     private class CircleView extends View {
 
         private Paint paint = new Paint();
-        private Circle draggedCircle; // To keep track of the circle being dragged
+        private Circle draggedCircle; //To keep track of the circle being dragged
 
         public CircleView(Context context) {
             super(context);
@@ -89,7 +100,7 @@ public class ActivityPlay extends AppCompatActivity {
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
 
-            // Draw circles on the canvas
+            //Draw circles on the canvas
             for (Circle circle : circles) {
                 paint.setColor(circle.getColor());
                 canvas.drawCircle(circle.getX(), circle.getY(), circle.getRadius(), paint);
@@ -103,19 +114,19 @@ public class ActivityPlay extends AppCompatActivity {
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    // Check if the touch is inside any circle
+                    //Check if the touch is inside any circle
                     draggedCircle = findCircleAt(touchX, touchY);
                     break;
                 case MotionEvent.ACTION_MOVE:
                     if (draggedCircle != null) {
-                        // Update the position of the dragged circle
+                        //Update the position of the dragged circle
                         draggedCircle.setX(touchX);
                         draggedCircle.setY(touchY);
                         invalidate(); // Redraw the view
                     }
                     break;
                 case MotionEvent.ACTION_UP:
-                    draggedCircle = null; // Reset dragged circle when touch is released
+                    draggedCircle = null; //Reset dragged circle when touch is released
                     break;
             }
 
@@ -123,7 +134,7 @@ public class ActivityPlay extends AppCompatActivity {
         }
 
         private Circle findCircleAt(float touchX, float touchY) {
-            // Check if the touch is inside any circle
+            //Check if the touch is inside any circle
             for (Circle circle : circles) {
                 if (isTouchInsideCircle(touchX, touchY, circle)) {
                     return circle;
@@ -176,5 +187,11 @@ public class ActivityPlay extends AppCompatActivity {
         public int getColor() {
             return color;
         }
+    }
+
+    private void moveToOverActivity() {
+        Intent intent = new Intent(ActivityPlay.this, OverActivity.class);
+        startActivity(intent);
+        finish(); //Finish the current activity to prevent the user from returning
     }
 }
