@@ -37,7 +37,7 @@ public class ActivityPlay extends AppCompatActivity {
 
         // Generate circles in random positions
         for (int i = 0; i < 4; i++) {
-            int radius = 140; // Set the radius to make them slightly larger
+            int radius = 180; //Setting size of circle
             int x = random.nextInt(getScreenWidth() - 2 * radius) + radius;
             int y = random.nextInt(getScreenHeight() - 2 * radius) + radius;
 
